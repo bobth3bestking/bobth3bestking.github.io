@@ -315,7 +315,7 @@
             <span>⬆️ Up</span>
             <span class="checkmark">✓</span>
         </div>
-        <div class="music-option" data-song="none">
+        <div class="music-option" data-song="noschool">
             <span>🔇 Do Not Play</span>
             <span class="checkmark">✓</span>
         </div>
@@ -368,9 +368,10 @@
 
         // Background Music Setup
         const songs = {
-            duck: 'https://assets.mixkit.co/active_storage/sfx/2703/2703-preview.mp3',
-            lemonade: 'https://assets.mixkit.co/active_storage/sfx/2702/2702-preview.mp3',
-            up: 'https://assets.mixkit.co/active_storage/sfx/2701/2701-preview.mp3'
+            duck: 'Duck.mp3',
+            lemonade: 'Lemonade.mp3',
+            up: 'Up.mp3',
+            noschool: 'Noschool.mp3'
         };
         
         const bgMusic = new Audio();
@@ -409,12 +410,12 @@
                 isPlaying = false;
                 audioBtn.classList.remove('playing');
                 
-                if (song !== 'none') {
+                if (song !== 'noschool') {
                     bgMusic.src = songs[song];
                     bgMusic.play();
                     isPlaying = true;
                     audioBtn.classList.add('playing');
-                    console.log(`Now playing: ${song}`);
+                    console.log(`Now playing: ${songs[song]}`);
                 } else {
                     console.log("Do not play in school");
                 }

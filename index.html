@@ -288,6 +288,97 @@
         .music-option.active span.checkmark {
             opacity: 1;
         }
+
+        /* Volume Control Styles */
+        .volume-control-container {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(0, 242, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-icon {
+            color: var(--neon-cyan);
+            font-size: 0.8rem;
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 4px;
+            background: rgba(0, 242, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--neon-cyan);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--neon-cyan);
+            transition: all 0.2s ease;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            background: var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--neon-cyan);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--neon-cyan);
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .volume-slider::-moz-range-thumb:hover {
+            background: var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .volume-value {
+            color: var(--neon-pink);
+            font-weight: 600;
+            font-size: 0.8rem;
+            min-width: 25px;
+        }
+
+        /* Stop Music Button */
+        .stop-music-btn {
+            padding: 10px 20px;
+            margin: 10px 15px 0 15px;
+            background: rgba(255, 0, 234, 0.1);
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: calc(100% - 30px);
+        }
+
+        .stop-music-btn:hover {
+            background: rgba(255, 0, 234, 0.2);
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .stop-music-btn:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -319,6 +410,14 @@
             <span>🔇 Do Not Play</span>
             <span class="checkmark">✓</span>
         </div>
+        
+        <div class="volume-control-container">
+            <span class="volume-icon">🔊</span>
+            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="70">
+            <span class="volume-value" id="volumeValue">70%</span>
+        </div>
+
+        <button class="stop-music-btn" id="stopMusicBtn">⏹ Stop Music</button>
     </div>
     
     <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-6 text-center">
@@ -344,6 +443,9 @@
         const dot = document.getElementById('cursorDot');
         const audioBtn = document.getElementById('audioToggle');
         const musicDropdown = document.getElementById('musicDropdown');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        const stopMusicBtn = document.getElementById('stopMusicBtn');
         const parallaxItems = document.querySelectorAll('.parallax-item');
         
         document.addEventListener('mousemove', (e) => {
@@ -379,6 +481,29 @@
         let isPlaying = false;
         let currentSong = 'none';
 
+        // Volume control
+        volumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value / 100;
+            bgMusic.volume = volume;
+            volumeValue.textContent = e.target.value + '%';
+        });
+
+        // Stop music button
+        stopMusicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            isPlaying = false;
+            audioBtn.classList.remove('playing');
+            
+            // Remove active state from all options
+            document.querySelectorAll('.music-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            currentSong = 'none';
+            console.log("Music stopped");
+        });
+
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (e.target !== audioBtn && !musicDropdown.contains(e.target)) {
@@ -410,15 +535,11 @@
                 isPlaying = false;
                 audioBtn.classList.remove('playing');
                 
-                if (song !== 'noschool') {
-                    bgMusic.src = songs[song];
-                    bgMusic.play();
-                    isPlaying = true;
-                    audioBtn.classList.add('playing');
-                    console.log(`Now playing: ${songs[song]}`);
-                } else {
-                    console.log("Do not play in school");
-                }
+                bgMusic.src = songs[song];
+                bgMusic.play();
+                isPlaying = true;
+                audioBtn.classList.add('playing');
+                console.log(`Now playing: ${songs[song]}`);
                 
                 musicDropdown.classList.remove('show');
             };
